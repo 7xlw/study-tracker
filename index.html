@@ -3,404 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Tracker</title>
+<title>Study Planner Animated</title>
+
 <style>
 :root {
-  --bg: #0d1227;
-  --panel: #f8fbff;
-  --text: #111827;
-  --muted: #64748b;
-  --primary: #4f46e5;
-  --primary2: #22c55e;
+  --bg: #1a1a1a;
+  --panel: #2c2c2c;
+  --card: #3a3a3a;
+  --text: #f5f5dc;
+  --muted: #c0c0c0;
+  --primary: #facc15;
+  --success: #22c55e;
   --danger: #ef4444;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Reset */
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 10%, #4f46e5 0%, #0f172a 45%, #0b1223 100%);
-  font-family: "Cairo", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #fff;
-  padding: 16px;
+  background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
+  font-family: "Cairo", sans-serif;
+  color: var(--text);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  padding: 20px;
+  overflow-x:hidden;
 }
-.top { text-align: center; }
+
+/* Animations */
+@keyframes floatIn { 0% { opacity:0; transform: translateY(20px); } 100% { opacity:1; transform: translateY(0); } }
+@keyframes pulseBtn { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.05); } }
+@keyframes fadeInTask { 0%{opacity:0; transform: translateX(-20px);} 100%{opacity:1; transform:translateX(0);} }
+
+/* Card */
 .page {
   width: min(760px, 100%);
-  margin-top: 10px;
-  background: var(--panel);
+  background: rgba(44,44,44,0.85);
+  backdrop-filter: blur(16px);
   border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,.15);
-  animation: floatCard .6s ease;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  animation: floatIn 0.6s ease forwards;
 }
+
+/* Menu */
+.menu {
+  display:flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
+  padding:15px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  font-weight:bold;
+  font-size:1rem;
+}
+
+.menu button {
+  background:none;
+  color: var(--text);
+  border:none;
+  cursor:pointer;
+  padding:8px 16px;
+  border-radius:10px;
+  transition: all .2s ease;
+}
+
+.menu button:hover {
+  background: var(--primary);
+  color:#1a1a1a;
+  transform: scale(1.05);
+}
+
+/* Header */
 .top {
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-  color: #fff;
-  padding: 20px 22px;
-  border-radius: 18px 18px 0 0;
-}
-.top h1 { font-size: clamp(1.7rem, 5vw, 2rem); margin-bottom: 6px; letter-spacing: 0.4px; }
-.top p { color: #e2e8f0; font-size: .95rem; line-height:1.4; }
-.container { padding: 18px 20px 20px; }
-.input-row { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
-@media (max-width: 710px) { .input-row { grid-template-columns: 1fr; }}
-.input-row label { font-size: .84rem; color: #334155; display: block; font-weight: 600; margin-bottom: 3px; }
-.input-row input, .input-row select, .input-row button {
-  width: 100%; border-radius: 10px; border: 1px solid #cbd5e1; padding: 10px 12px;
-  font-size: .95rem;
-}
-.input-row input, .input-row select { background: #fff; color: #0f172a; }
-.input-row button {
-  border: none; background: linear-gradient(135deg,#4f46e5,#22c55e);
-  color: #fff; font-weight: 700; cursor: pointer;
-  transition: transform .16s ease, filter .16s ease;
-  height: 42px;
-}
-.input-row button:hover { transform: translateY(-2px); filter: brightness(1.05); }
-.error-box {
-  margin: 0 0 12px;
-  border: 1px solid #f87171;
-  background: #fef2f2;
-  color: #b91c1c;
-  border-radius: 10px;
-  padding: 10px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-size: .92rem;
-}
-.error-box button {
-  background: #f87171;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-}
-.hidden { display: none; }
-.small-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 4px; }
-.task-row { margin-top: 8px; }
-.tasks { display: grid; gap: 10px; margin-top: 6px; }
-.task {
-  background: #fff; color: #111827; border-radius: 10px; padding: 12px;
-  display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  border-left: 4px solid transparent; box-shadow: 0 8px 20px rgba(15,23,42,.08);
-  animation: fadeIn .25s ease;
-}
-.task .text { font-weight: 700; font-size: .96rem; }
-.task .text.done { text-decoration: line-through; color: #10b981; }
-.task button { border: none; border-radius: 8px; width: 38px; height: 38px; background: #4f46e5; color: #fff; cursor: pointer; font-weight: 700; }
-.task-actions { display: flex; gap: 6px; }
-.task .delete-btn { background: #ef4444 !important; }
-.task-grid { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px; }
-.task-grid h3 { margin-bottom: 6px; font-size: 1rem; }
-.task-grid ul { list-style: none; padding-left: 0; margin: 0; }
-.task-grid li { background: #fff; border-radius: 8px; margin-bottom: 6px; padding: 8px; display:flex; justify-content: space-between; align-items: center; border: 1px solid #dbeafe; }
-.task-grid li.done { background: #ecfdf3; border-color: #bbf7d0; }
-.task-grid li .task-time { font-size:.8rem; color:#475569; margin-left:4px; }
-.footer { padding: 12px 18px; text-align: center; font-size: .9rem; color: #64748b; border-top:1px solid #e2e8f0; }
-@keyframes floatCard {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-@keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:translateY(0);} }
-@keyframes pulseTime { 0% { transform: scale(0.98); opacity: 0.9; } 50% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(0.98); opacity: 0.9; }}
-
-.clock {
-  margin: 6px auto 10px;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  color: #fef3c7;
-  background: rgba(30, 41, 59, 0.35);
-  border: 1px dashed rgba(255,255,255,0.35);
-  border-radius: 8px;
-  padding: 7px 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  animation: pulseTime 2s ease-in-out infinite;
-}
-
-.subtitle { margin-top: 8px; color: #e2e8f0; font-size: .97rem; font-weight: 500; }
-
-.top {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #111827 100%);
-  color: #f8fafc;
-  padding: 22px 22px;
-  border-radius: 18px 18px 0 0;
+  background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
+  padding: 22px;
   text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-body { background: radial-gradient(circle at 20% 10%, #0e172f 0%, #111827 45%, #0b1223 100%); }
+.top h1 { font-size: 1.8rem; }
+.clock {
+  margin-top: 8px;
+  font-weight: bold;
+  color: var(--primary);
+  animation: pulseBtn 2s infinite;
+}
 
-.page { border: 1px solid rgba(255,255,255,0.15); }
+/* Container */
+.container { padding: 20px; }
 
-input, select { border-color: #cbd5e1; }
+/* Inputs */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
 
-.task { background: #f8fafc; }
-.task.done { background: #ecfdf3; border-left-color: #10b981; }
+@media(max-width:700px){
+  .input-row { grid-template-columns:1fr; }
+}
+
+label {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+input {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  background:#1a1a1a;
+  border:1px solid #3a3a3a;
+  color:var(--text);
+  transition: all .2s ease;
+}
+
+input:focus {
+  border-color: var(--primary);
+  outline:none;
+  transform: scale(1.02);
+}
+
+/* Buttons */
+button {
+  cursor:pointer;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  transition: all .2s ease;
+}
+
+.input-row button {
+  background: linear-gradient(135deg, var(--primary), #fcd34d);
+  color:#1a1a1a;
+  height:42px;
+  animation: floatIn 0.6s ease forwards;
+}
+
+.input-row button:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Tasks */
+.tasks {
+  margin-top:10px;
+  display:grid;
+  gap:10px;
+}
+
+.task {
+  background: var(--card);
+  padding:12px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-left:4px solid transparent;
+  opacity:0;
+  animation: fadeInTask 0.4s forwards;
+}
+
+.task.done {
+  background:#1e3a1a;
+  border-left-color: var(--success);
+}
+
 .task.late {
-  background: #fff1f2;
-  color: #b91c1c;
-  border-left-color: #ef4444;
-  border: 1px solid #fecaca;
-  box-shadow: 0 8px 20px rgba(220,38,38,.15);
+  background:#3a1a1a;
+  border-left-color: var(--danger);
 }
-.task.late .text { color: #b91c1c; }
-.task button { background: #2563eb; }
-.task .delete-btn { background: #dc2626 !important; }
 
-.error-box { background: #fff1f2; border-color: #fecdd3; color: #991b1b; }
-.error-box button { background: #dc2626; }
+.task .text.done {
+  text-decoration: line-through;
+  color: var(--success);
+}
 
-.footer { background: #f8fafc; color: #334155; }
+.task-actions {
+  display:flex;
+  gap:6px;
+}
+
+.task button {
+  width:35px;
+  height:35px;
+  background: var(--primary);
+  color:#1a1a1a;
+  border-radius:50%;
+  transition: all .2s ease;
+}
+
+.task button:hover { transform: scale(1.2); }
+
+.delete-btn {
+  background: var(--danger) !important;
+  border-radius:50%;
+  transition: all .2s ease;
+}
+
+.delete-btn:hover { transform: scale(1.2) rotate(-10deg); }
+
+/* Error */
+.error-box {
+  background:#3a1a1a;
+  border:1px solid var(--danger);
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  animation: floatIn 0.4s ease forwards;
+}
+
+.hidden { display:none; }
+
+/* Footer */
+.footer {
+  text-align:center;
+  padding:10px;
+  font-size:.8rem;
+  color: var(--muted);
+  border-top:1px solid rgba(255,255,255,0.05);
+  animation: floatIn 0.6s ease forwards;
+}
 </style>
 </head>
+
 <body>
 
 <div class="page">
-  <section class="top">
-    <h1>Study Planner</h1>
-    <p id="clock" class="clock">🕒 <span id="clockText">--:--:--</span></p>
-    <p class="subtitle">Organize your study tasks clearly with time and priority.</p>
-  </section>
+
+  <!-- Menu أعلى الصفحة -->
+  <div class="menu">
+    <button>الرئيسية</button>
+    <button>المهام</button>
+    <button>الإعدادات</button>
+  </div>
+
+  <div class="top">
+    <h1>📚 Study Planner</h1>
+    <div class="clock" id="clockText"></div>
+  </div>
 
   <div class="container">
+
     <div class="input-row">
       <label>
-        مهمة
-        <input id="taskInput" type="text" placeholder="مثلاً: مراجعة الرياضيات">
+        المهمة
+        <input id="taskInput" placeholder="مثلاً: رياضيات">
       </label>
+
       <label>
-        وقت المهمة
-        <div class="small-row">
-          <input id="hourInput" type="number" min="0" max="23" step="1" value="8" placeholder="ساعة">
-          <input id="minuteInput" type="number" min="0" max="59" step="1" value="00" placeholder="دقيقة">
+        الوقت
+        <div style="display:flex; gap:5px;">
+          <input id="hourInput" type="number" min="0" max="23" value="8">
+          <input id="minuteInput" type="number" min="0" max="59" value="00">
         </div>
       </label>
-      <label>
-        اختر اليوم
-        <select id="dayInput" style="width:100%;">
-          <option value="الأحد">الأحد</option>
-          <option value="الاثنين">الاثنين</option>
-          <option value="الثلاثاء">الثلاثاء</option>
-          <option value="الأربعاء">الأربعاء</option>
-          <option value="الخميس">الخميس</option>
-          <option value="الجمعة">الجمعة</option>
-          <option value="السبت">السبت</option>
-        </select>
-      </label>
     </div>
+
     <div class="input-row">
-      <button onclick="addTask()">+ إضافة المهمة</button>
-      <button id="toggleTableBtn" style="background:#f59e0b;" onclick="toggleDayTasks()">▼ جدول اليوم</button>
+      <button onclick="addTask()">+ إضافة</button>
     </div>
-    <div class="input-row" style="grid-template-columns:1fr;">
-      <div style="background:#eef2ff; border:1px dashed #93c5fd; border-radius:10px; padding:10px; color:#1d4ed8; font-weight:700;">
-        اسحب المهمة من القائمة وأفلتها هنا لإضافتها للجدول
-      </div>
-    </div>
+
     <div id="errorBox" class="error-box hidden">
-      <span>يرجى كتابة المهمة أولاً.</span>
-      <button onclick="hideError()">✕</button>
+      اكتب المهمة أولاً
     </div>
-    <div class="task-row">
-      <div id="tasks" class="tasks"></div>
-    </div>
-    <div class="task-row">
-      <div id="dayTasks" class="tasks hidden" ondrop="dropToTable(event)" ondragover="allowDrop(event)"></div>
-    </div>
+
+    <div id="tasks" class="tasks"></div>
+
   </div>
-  <div class="footer">التصميم أصبح احترافي مع أنيميشن والتوقيت القابل للضبط.</div>
+
+  <div class="footer">تصميم مريح مع أنيميشن سلس Dark Mode</div>
+
 </div>
 
 <script>
-const hourEl = document.getElementById("hourInput");
-const minuteEl = document.getElementById("minuteInput");
-let tasks = JSON.parse(localStorage.getItem("studyTasks") || "[]");
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-function saveTasks(){ localStorage.setItem("studyTasks", JSON.stringify(tasks)); }
-function to24(hour, minute){
-  const h = Number(hour);
-  const m = Number(minute);
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
-  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+function save(){
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
-
-function showError(){ document.getElementById("errorBox").classList.remove("hidden"); }
-function hideError(){ document.getElementById("errorBox").classList.add("hidden"); }
-
-function showToast(message){ alert(message); }
-function hideToast(){ }
 
 function addTask(){
-  const text = document.getElementById("taskInput").value.trim();
-  const hour = Number(document.getElementById("hourInput").value);
-  const minute = Number(document.getElementById("minuteInput").value);
-  const day = document.getElementById("dayInput").value;
+  let text = taskInput.value.trim();
+  let hour = hourInput.value;
+  let min = minuteInput.value;
 
-  if (!text){ showError(); return; }
-  const time24 = to24(hour, minute);
-  if (!time24){ alert("أدخل وقتًا صحيحًا (0-23 ساعة، 0-59 دقيقة)"); return; }
+  if(!text){
+    errorBox.classList.remove("hidden");
+    return;
+  }
 
-  hideError();
-  tasks.unshift({
+  errorBox.classList.add("hidden");
+
+  tasks.push({
     text,
-    time: time24,
-    day: day || "الأحد",
-    display: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-    done: false,
-    inTable: false,
+    time: `${hour.padStart(2,'0')}:${min.padStart(2,'0')}`,
+    done:false
   });
-  saveTasks();
-  renderTasks();
-  updateTaskPicker();
-  document.getElementById("taskInput").value = "";
+
+  taskInput.value="";
+  save();
+  render();
 }
 
-function markDone(i){ tasks[i].done = !tasks[i].done; saveTasks(); renderTasks(); updateTaskPicker(); }
-function deleteTask(i){ tasks.splice(i,1); saveTasks(); renderTasks(); updateTaskPicker(); }
+function render(){
+  tasksEl.innerHTML="";
 
-function toggleInTable(i){
-  tasks.forEach((t, j) => t.inTable = (j === i ? !tasks[i].inTable : false));
-  saveTasks();
-  renderTasks();
-  updateTaskPicker();
-}
-function addTaskToTable(){
-  const picker = document.getElementById("taskPicker");
-  const idx = Number(picker.value);
-  if (Number.isNaN(idx) || idx < 0 || idx >= tasks.length){ alert("اختر مهمة من القائمة أولًا."); return; }
-  tasks.forEach((task, i) => task.inTable = (i === idx));
-  saveTasks();
-  renderTasks();
-  updateTaskPicker();
-  showDayTasks();
-}
-function removeFromTable(idx){
-  if (tasks[idx]){
-    tasks[idx].inTable = false;
-    saveTasks();
-    renderTasks();
-    updateTaskPicker();
-    showDayTasks();
-  }
-}
+  let now = new Date();
+  let timeNow = now.toTimeString().slice(0,5);
 
-function updateTaskPicker(){
-  const picker = document.getElementById("taskPicker");
-  if (!picker) return;
-  picker.innerHTML = "";
-  if (!tasks.length){
-    const option = document.createElement("option");
-    option.value = "";
-    option.textContent = "لا توجد مهام";
-    picker.appendChild(option);
-    return;
-  }
-  tasks.forEach((task, i) => {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = `${task.text} (${task.day} ${task.display})`;
-    picker.appendChild(option);
-  });
-}
+  tasks.forEach((t,i)=>{
+    let late = !t.done && t.time < timeNow;
 
+    let div = document.createElement("div");
+    div.className = "task" + (t.done ? " done" : late ? " late":"");
+    div.style.animationDelay = `${i*0.1}s`;
 
-function updateClock(){
-  const now = new Date();
-  document.getElementById("clockText").textContent = now.toLocaleTimeString("en-US", {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-}
-
-function showDayTasks(){
-  const day = document.getElementById("dayInput").value;
-  const listEl = document.getElementById("dayTasks");
-  listEl.classList.remove("hidden");
-  listEl.innerHTML = "";
-  const dayTasks = tasks.filter((task) => task.day === day && task.inTable);
-  const box = document.createElement("div");
-  box.className = "task";
-  if (!dayTasks.length){
-    box.innerHTML = `<div class="text">جدول ${day}</div><div style='font-size:.8rem; color:#475569; margin-top:4px;'>لا يوجد مهام لهذا اليوم</div>`;
-    listEl.appendChild(box);
-    const btn = document.getElementById("toggleTableBtn");
-    if (btn) btn.textContent = "▼ إخفاء الجدول";
-    return;
-  }
-
-  const items = dayTasks.map((task) => {
-    const index = tasks.findIndex(t => t === task);
-    return `<div style='margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:6px; background:#f8fafc; padding:6px; border-radius:8px;'><span><strong>${task.text}</strong> <span style='color:#475569;'>(${task.display})</span></span><span style='display:flex; gap:4px;'><button style='background:#10b981;color:white;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;' onclick='markDone(${index})'>${task.done ? "✔" : "☐"}</button><button style='background:#ef4444;color:white;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;' onclick='removeFromTable(${index})'>إزالة</button></span></div>`;
-  }).join("");
-  box.innerHTML = `<div class="text">جدول ${day}</div><div style='margin-top:8px;'>${items}</div>`;
-  listEl.appendChild(box);
-  const btn = document.getElementById("toggleTableBtn");
-  if (btn) btn.textContent = "▼ إخفاء الجدول";
-}
-
-function toggleDayTasks(){
-  const listEl = document.getElementById("dayTasks");
-  const btn = document.getElementById("toggleTableBtn");
-  if (listEl.classList.contains("hidden")) {
-    showDayTasks();
-    btn.textContent = "▼ إخفاء الجدول";
-  } else {
-    listEl.classList.add("hidden");
-    btn.textContent = "▶ جدول اليوم";
-  }
-}
-
-function hideDayTasks(){
-  const listEl = document.getElementById("dayTasks");
-  listEl.innerHTML = "";
-  listEl.classList.add("hidden");
-  const btn = document.getElementById("toggleTableBtn");
-  if (btn) btn.textContent = "▶ جدول اليوم";
-}
-
-function renderTasks(){
-  const container = document.getElementById("tasks");
-  container.innerHTML = "";
-  const now = new Date();
-  const today = now.getDay(); // Sunday=0
-  const arabicToday = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][today];
-
-  const visibleTasks = tasks.filter((task) => !task.inTable);
-  if (!visibleTasks.length){
-    container.innerHTML = `<div class='task'><div class='text'>لا توجد مهام ظاهرية (المهمة في الجدول الآن)</div></div>`;
-    updateTaskPicker();
-    return;
-  }
-  visibleTasks.forEach((task) => {
-    const index = tasks.indexOf(task);
-    const isLate = !task.done && task.day === arabicToday && now.toTimeString().slice(0,5) > task.time;
-    const row = document.createElement("div");
-    row.className = "task" + (task.done ? " done" : isLate ? " late" : "");
-    row.innerHTML = `
-      <div>
-        <div class="text ${task.done ? "done" : ""}">${task.text} <small style="font-size:.78rem; color:#718096; margin-left:4px;">(${task.day || 'اليوم'} ${task.display})</small></div>
+    div.innerHTML = `
+      <div class="text ${t.done?"done":""}">
+        ${t.text} (${t.time})
       </div>
+
       <div class="task-actions">
-        <button onclick="markDone(${index})">${task.done ? "↩" : "✔"}</button>
-        <button onclick="toggleInTable(${index})">${task.inTable ? "📌" : "⬜"}</button>
-        <button class="delete-btn" onclick="deleteTask(${index})">🗑</button>
-      </div>`;
-    container.appendChild(row);
+        <button onclick="toggle(${i})">${t.done?"↩":"✔"}</button>
+        <button class="delete-btn" onclick="del(${i})">🗑</button>
+      </div>
+    `;
+
+    tasksEl.appendChild(div);
   });
-  updateTaskPicker();
 }
 
-updateClock();
-renderTasks();
-updateTaskPicker();
-setInterval(updateClock,1000);
+function toggle(i){
+  tasks[i].done = !tasks[i].done;
+  save();
+  render();
+}
+
+function del(i){
+  tasks.splice(i,1);
+  save();
+  render();
+}
+
+function clock(){
+  let now = new Date();
+  clockText.textContent = now.toLocaleTimeString();
+}
+
+setInterval(clock,1000);
+
+let tasksEl = document.getElementById("tasks");
+render();
 </script>
 
 </body>
