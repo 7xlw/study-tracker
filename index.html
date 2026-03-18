@@ -17,8 +17,8 @@
   --danger: #ef4444;
 }
 
-/* Reset */
 * { margin:0; padding:0; box-sizing:border-box; }
+
 body {
   min-height: 100vh;
   background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
@@ -30,12 +30,10 @@ body {
   overflow-x:hidden;
 }
 
-/* Animations */
 @keyframes floatIn { 0% { opacity:0; transform: translateY(20px); } 100% { opacity:1; transform: translateY(0); } }
 @keyframes pulseBtn { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.05); } }
 @keyframes fadeInTask { 0%{opacity:0; transform: translateX(-20px);} 100%{opacity:1; transform:translateX(0);} }
 
-/* Card */
 .page {
   width: min(760px, 100%);
   background: rgba(44,44,44,0.85);
@@ -47,7 +45,6 @@ body {
   animation: floatIn 0.6s ease forwards;
 }
 
-/* Menu */
 .menu {
   display:flex;
   justify-content: space-around;
@@ -74,7 +71,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Header */
 .top {
   background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
   padding: 22px;
@@ -90,10 +86,8 @@ body {
   animation: pulseBtn 2s infinite;
 }
 
-/* Container */
 .container { padding: 20px; }
 
-/* Inputs */
 .input-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -126,7 +120,6 @@ input:focus {
   transform: scale(1.02);
 }
 
-/* Buttons */
 button {
   cursor:pointer;
   border:none;
@@ -147,7 +140,6 @@ button {
   filter: brightness(1.1);
 }
 
-/* Tasks */
 .tasks {
   margin-top:10px;
   display:grid;
@@ -205,7 +197,6 @@ button {
 
 .delete-btn:hover { transform: scale(1.2) rotate(-10deg); }
 
-/* Error */
 .error-box {
   background:#3a1a1a;
   border:1px solid var(--danger);
@@ -217,7 +208,6 @@ button {
 
 .hidden { display:none; }
 
-/* Footer */
 .footer {
   text-align:center;
   padding:10px;
@@ -228,12 +218,9 @@ button {
 }
 </style>
 </head>
-
 <body>
 
 <div class="page">
-
-  <!-- Menu أعلى الصفحة -->
   <div class="menu">
     <button>الرئيسية</button>
     <button>المهام</button>
@@ -246,13 +233,11 @@ button {
   </div>
 
   <div class="container">
-
     <div class="input-row">
       <label>
         المهمة
         <input id="taskInput" placeholder="مثلاً: رياضيات">
       </label>
-
       <label>
         الوقت
         <div style="display:flex; gap:5px;">
@@ -263,27 +248,29 @@ button {
     </div>
 
     <div class="input-row">
-      <button onclick="addTask()">+ إضافة</button>
+      <button id="addBtn">+ إضافة</button>
     </div>
 
-    <div id="errorBox" class="error-box hidden">
-      اكتب المهمة أولاً
-    </div>
+    <div id="errorBox" class="error-box hidden">اكتب المهمة أولاً</div>
 
     <div id="tasks" class="tasks"></div>
-
   </div>
 
   <div class="footer">Developer - GNR 🔥</div>
-
 </div>
 
 <script>
+const taskInput = document.getElementById("taskInput");
+const hourInput = document.getElementById("hourInput");
+const minuteInput = document.getElementById("minuteInput");
+const tasksEl = document.getElementById("tasks");
+const errorBox = document.getElementById("errorBox");
+const clockText = document.getElementById("clockText");
+const addBtn = document.getElementById("addBtn");
+
 let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-function save(){
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+function save(){ localStorage.setItem("tasks", JSON.stringify(tasks)); }
 
 function addTask(){
   let text = taskInput.value.trim();
@@ -299,7 +286,7 @@ function addTask(){
 
   tasks.push({
     text,
-    time: `${hour.padStart(2,'0')}:${min.padStart(2,'0')}`,
+    time: `${hour.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}`,
     done:false
   });
 
@@ -309,54 +296,46 @@ function addTask(){
 }
 
 function render(){
-  tasksEl.innerHTML="";
-
-  let now = new Date();
-  let timeNow = now.toTimeString().slice(0,5);
+  tasksEl.innerHTML = "";
+  const now = new Date();
+  const timeNow = now.toTimeString().slice(0,5);
+  const frag = document.createDocumentFragment();
 
   tasks.forEach((t,i)=>{
-    let late = !t.done && t.time < timeNow;
+    const late = !t.done && t.time < timeNow;
 
-    let div = document.createElement("div");
+    const div = document.createElement("div");
     div.className = "task" + (t.done ? " done" : late ? " late":"");
-    div.style.animationDelay = `${i*0.1}s`;
+    div.style.animationDelay = `${i*0.05}s`;
 
     div.innerHTML = `
-      <div class="text ${t.done?"done":""}">
-        ${t.text} (${t.time})
-      </div>
-
+      <div class="text ${t.done?"done":""}">${t.text} (${t.time})</div>
       <div class="task-actions">
         <button onclick="toggle(${i})">${t.done?"↩":"✔"}</button>
         <button class="delete-btn" onclick="del(${i})">🗑</button>
       </div>
     `;
 
-    tasksEl.appendChild(div);
+    frag.appendChild(div);
   });
+
+  tasksEl.appendChild(frag);
 }
 
-function toggle(i){
-  tasks[i].done = !tasks[i].done;
-  save();
-  render();
-}
+function toggle(i){ tasks[i].done = !tasks[i].done; save(); render(); }
+function del(i){ tasks.splice(i,1); save(); render(); }
 
-function del(i){
-  tasks.splice(i,1);
-  save();
-  render();
-}
-
-function clock(){
-  let now = new Date();
+function updateClock(){
+  const now = new Date();
   clockText.textContent = now.toLocaleTimeString();
+  requestAnimationFrame(updateClock);
 }
 
-setInterval(clock,1000);
+addBtn.addEventListener("click", addTask);
 
-let tasksEl = document.getElementById("tasks");
+// أول مرة
 render();
+updateClock();
 </script>
 
 </body>
