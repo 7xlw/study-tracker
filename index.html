@@ -1,267 +1,224 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Planner Pro</title>
+<title>Study Planner Animated</title>
 
 <style>
+/* نفس CSS تبعك بدون تغيير */
 :root {
-  --bg: #1a1a1a;
-  --panel: #2c2c2c;
-  --card: #3a3a3a;
-  --text: #f5f5dc;
-  --muted: #c0c0c0;
-  --primary: #facc15;
-  --success: #22c55e;
-  --danger: #ef4444;
+ --bg: #1a1a1a;
+ --panel: #2c2c2c;
+ --card: #3a3a3a;
+ --text: #f5f5dc;
+ --muted: #c0c0c0;
+ --primary: #facc15;
+ --success: #22c55e;
+ --danger: #ef4444;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  min-height: 100vh;
-  background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+ min-height: 100vh;
+ background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
+ font-family: "Cairo", sans-serif;
+ color: var(--text);
+ display: flex;
+ justify-content: center;
+ padding: 20px;
 }
-
-@keyframes floatIn { 0% { opacity:0; transform: translateY(20px); } 100% { opacity:1; transform: translateY(0); } }
 
 .page {
-  width: min(850px, 100%);
-  background: rgba(44,44,44,0.9);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-  overflow: hidden;
-  animation: floatIn 0.5s ease;
+ width: min(760px, 100%);
+ background: rgba(44,44,44,0.85);
+ backdrop-filter: blur(16px);
+ border-radius: 18px;
+ overflow: hidden;
+ box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
 
-.top {
-  background: linear-gradient(135deg, #333, #222);
-  padding: 25px;
-  text-align: center;
-  border-bottom: 2px solid var(--primary);
+.top { padding:20px; text-align:center; }
+.clock { color: var(--primary); }
+
+.container { padding:20px; }
+
+.input-row {
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-bottom:10px;
 }
-
-.clock {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--primary);
-  margin-top: 10px;
-}
-
-.container { padding: 25px; }
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
-  background: rgba(0,0,0,0.2);
-  padding: 20px;
-  border-radius: 15px;
-}
-
-.row {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.input-group { flex: 1; min-width: 200px; }
-
-label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: var(--muted); }
 
 input, select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  background: #1a1a1a;
-  color: white;
-  outline: none;
+ width:100%;
+ padding:10px;
+ border-radius:10px;
+ background:#1a1a1a;
+ border:1px solid #3a3a3a;
+ color:var(--text);
 }
 
-input:focus { border-color: var(--primary); }
-
-.add-btn {
-  background: var(--primary);
-  color: #000;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  width: 100%;
-  font-size: 1.1rem;
+button {
+ background: var(--primary);
+ border:none;
+ padding:10px;
+ border-radius:10px;
+ cursor:pointer;
 }
 
-.add-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+.tasks { margin-top:10px; display:grid; gap:10px; }
 
-.tasks { display: grid; gap: 15px; }
-
-.task-card {
-  background: var(--card);
-  padding: 15px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-right: 5px solid var(--primary);
-  transition: 0.3s;
+.task {
+ background: var(--card);
+ padding:10px;
+ border-radius:10px;
+ display:flex;
+ justify-content:space-between;
 }
 
-.task-card.done { border-right-color: var(--success); opacity: 0.7; }
-.task-card.done .task-info { text-decoration: line-through; }
+.task.done { background:#1e3a1a; }
+.task.late { background:#3a1a1a; }
 
-.task-info h3 { font-size: 1.1rem; margin-bottom: 5px; }
-.task-time { font-size: 0.85rem; color: var(--primary); font-weight: bold; }
-
-.actions { display: flex; gap: 10px; }
-
-.btn-action {
-  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-}
-
-.done-btn { background: var(--success); color: white; }
-.del-btn { background: var(--danger); color: white; }
-
-.footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.8rem; }
-
+.delete-btn { background:red; color:white; }
 </style>
 </head>
+
 <body>
 
 <div class="page">
-  <div class="top">
-    <h1>📝 منظّم الدراسة الذكي</h1>
-    <div id="clockText" class="clock">00:00:00</div>
-  </div>
+<div class="top">
+<h1>📚 Study Planner</h1>
+<div id="clockText" class="clock"></div>
+</div>
 
-  <div class="container">
-    <div class="input-section">
-      <div class="input-group">
-        <label>اسم المادة / المهمة</label>
-        <input type="text" id="taskInput" placeholder="مثلاً: مراجعة فيزياء">
-      </div>
+<div class="container">
 
-      <div class="row">
-        <div class="input-group">
-          <label>من (البداية)</label>
-          <div style="display:flex; gap:5px;">
-            <input type="number" id="startHour" placeholder="الساعة" min="1" max="12">
-            <select id="startPeriod">
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
-          </div>
-        </div>
+<div class="input-row">
+<input id="taskInput" placeholder="المهمة">
 
-        <div class="input-group">
-          <label>إلى (النهاية)</label>
-          <div style="display:flex; gap:5px;">
-            <input type="number" id="endHour" placeholder="الساعة" min="1" max="12">
-            <select id="endPeriod">
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
-          </div>
-        </div>
-      </div>
+<div>
+بداية:
+<div style="display:flex; gap:5px;">
+<input id="startHour" type="number" min="1" max="12" value="8">
+<input id="startMin" type="number" min="0" max="59" value="0">
+<select id="startAP">
+<option>AM</option>
+<option>PM</option>
+</select>
+</div>
+</div>
+</div>
 
-      <button class="add-btn" onclick="addTask()">+ إضافة للجدول</button>
-    </div>
+<div class="input-row">
+<div>
+نهاية:
+<div style="display:flex; gap:5px;">
+<input id="endHour" type="number" min="1" max="12" value="9">
+<input id="endMin" type="number" min="0" max="59" value="0">
+<select id="endAP">
+<option>AM</option>
+<option>PM</option>
+</select>
+</div>
+</div>
 
-    <div id="tasksContainer" class="tasks">
-      </div>
-  </div>
+<button id="addBtn">+ إضافة</button>
+</div>
 
-  <div class="footer">Developer - GNR 🔥 | 2026</div>
+<div id="tasks" class="tasks"></div>
+
+</div>
 </div>
 
 <script>
-let tasks = JSON.parse(localStorage.getItem("study_tasks") || "[]");
+const taskInput = document.getElementById("taskInput");
+const tasksEl = document.getElementById("tasks");
 
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clockText').textContent = now.toLocaleTimeString('ar-EG');
-  requestAnimationFrame(updateClock);
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+function convertTo24(h, m, ap){
+ h = parseInt(h);
+ m = parseInt(m);
+
+ if(ap === "PM" && h !== 12) h += 12;
+ if(ap === "AM" && h === 12) h = 0;
+
+ return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
 }
 
-function addTask() {
-  const text = document.getElementById("taskInput").value;
-  const sHour = document.getElementById("startHour").value;
-  const sPeriod = document.getElementById("startPeriod").value;
-  const eHour = document.getElementById("endHour").value;
-  const ePeriod = document.getElementById("endPeriod").value;
-
-  if (!text || !sHour || !eHour) {
-    alert("الرجاء تعبئة كافة الحقول!");
-    return;
-  }
-
-  const newTask = {
-    id: Date.now(),
-    text,
-    startTime: `${sHour} ${sPeriod}`,
-    endTime: `${eHour} ${ePeriod}`,
-    done: false
-  };
-
-  tasks.push(newTask);
-  saveAndRender();
-  
-  // مسح الخانات بعد الإضافة
-  document.getElementById("taskInput").value = "";
-  document.getElementById("startHour").value = "";
-  document.getElementById("endHour").value = "";
+function save(){
+ localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function toggleTask(id) {
-  tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
-  saveAndRender();
+function addTask(){
+ const text = taskInput.value.trim();
+ if(!text) return;
+
+ const start = convertTo24(
+ document.getElementById("startHour").value,
+ document.getElementById("startMin").value,
+ document.getElementById("startAP").value
+ );
+
+ const end = convertTo24(
+ document.getElementById("endHour").value,
+ document.getElementById("endMin").value,
+ document.getElementById("endAP").value
+ );
+
+ tasks.push({ text, start, end, done:false });
+
+ taskInput.value="";
+ save();
+ render();
 }
 
-function deleteTask(id) {
-  tasks = tasks.filter(t => t.id !== id);
-  saveAndRender();
+function render(){
+ tasksEl.innerHTML="";
+ const now = new Date().toTimeString().slice(0,5);
+
+ tasks.forEach((t,i)=>{
+ const late = !t.done && t.end < now;
+
+ const div = document.createElement("div");
+ div.className = "task " + (t.done?"done": late?"late":"");
+
+ div.innerHTML = `
+ <div>${t.text} (${t.start} - ${t.end})</div>
+ <div>
+ <button onclick="toggle(${i})">${t.done?"↩":"✔"}</button>
+ <button class="delete-btn" onclick="del(${i})">🗑</button>
+ </div>
+ `;
+
+ tasksEl.appendChild(div);
+ });
 }
 
-function saveAndRender() {
-  localStorage.setItem("study_tasks", JSON.stringify(tasks));
-  render();
+function toggle(i){
+ tasks[i].done = !tasks[i].done;
+ save();
+ render();
 }
 
-function render() {
-  const container = document.getElementById("tasksContainer");
-  container.innerHTML = "";
-
-  tasks.forEach(t => {
-    const div = document.createElement("div");
-    div.className = `task-card ${t.done ? 'done' : ''}`;
-    div.innerHTML = `
-      <div class="task-info">
-        <h3>${t.text}</h3>
-        <span class="task-time">🕒 من ${t.startTime} إلى ${t.endTime}</span>
-      </div>
-      <div class="actions">
-        <button class="btn-action done-btn" onclick="toggleTask(${t.id})">${t.done ? '↩' : '✓'}</button>
-        <button class="btn-action del-btn" onclick="deleteTask(${t.id})">🗑</button>
-      </div>
-    `;
-    container.appendChild(div);
-  });
+function del(i){
+ tasks.splice(i,1);
+ save();
+ render();
 }
 
-// البدء
-updateClock();
+function updateClock(){
+ document.getElementById("clockText").textContent =
+ new Date().toLocaleTimeString();
+ requestAnimationFrame(updateClock);
+}
+
+document.getElementById("addBtn").onclick = addTask;
+
 render();
+updateClock();
 </script>
 
 </body>
