@@ -1,225 +1,683 @@
 <!DOCTYPE html>
+
 <html lang="ar">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Study Planner Animated</title>
 
+
+
 <style>
-/* نفس CSS تبعك بدون تغيير */
+
 :root {
- --bg: #1a1a1a;
- --panel: #2c2c2c;
- --card: #3a3a3a;
- --text: #f5f5dc;
- --muted: #c0c0c0;
- --primary: #facc15;
- --success: #22c55e;
- --danger: #ef4444;
+
+  --bg: #1a1a1a;
+
+  --panel: #2c2c2c;
+
+  --card: #3a3a3a;
+
+  --text: #f5f5dc;
+
+  --muted: #c0c0c0;
+
+  --primary: #facc15;
+
+  --success: #22c55e;
+
+  --danger: #ef4444;
+
 }
+
+
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+
+
 body {
- min-height: 100vh;
- background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
- font-family: "Cairo", sans-serif;
- color: var(--text);
- display: flex;
- justify-content: center;
- padding: 20px;
+
+  min-height: 100vh;
+
+  background: radial-gradient(circle at 10% 10%, #2c2c2c, #1a1a1a);
+
+  font-family: "Cairo", sans-serif;
+
+  color: var(--text);
+
+  display: flex;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  overflow-x:hidden;
+
 }
+
+
+
+@keyframes floatIn { 0% { opacity:0; transform: translateY(20px); } 100% { opacity:1; transform: translateY(0); } }
+
+@keyframes pulseBtn { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.05); } }
+
+@keyframes fadeInTask { 0%{opacity:0; transform: translateX(-20px);} 100%{opacity:1; transform:translateX(0);} }
+
+
 
 .page {
- width: min(760px, 100%);
- background: rgba(44,44,44,0.85);
- backdrop-filter: blur(16px);
- border-radius: 18px;
- overflow: hidden;
- box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+
+  width: min(760px, 100%);
+
+  background: rgba(44,44,44,0.85);
+
+  backdrop-filter: blur(16px);
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  overflow: hidden;
+
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+
+  animation: floatIn 0.6s ease forwards;
+
 }
 
-.top { padding:20px; text-align:center; }
-.clock { color: var(--primary); }
 
-.container { padding:20px; }
+
+.menu {
+
+  display:flex;
+
+  justify-content: space-around;
+
+  background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
+
+  padding:15px 0;
+
+  border-bottom:1px solid rgba(255,255,255,0.05);
+
+  font-weight:bold;
+
+  font-size:1rem;
+
+}
+
+
+
+.menu button {
+
+  background:none;
+
+  color: var(--text);
+
+  border:none;
+
+  cursor:pointer;
+
+  padding:8px 16px;
+
+  border-radius:10px;
+
+  transition: all .2s ease;
+
+}
+
+
+
+.menu button:hover {
+
+  background: var(--primary);
+
+  color:#1a1a1a;
+
+  transform: scale(1.05);
+
+}
+
+
+
+.top {
+
+  background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
+
+  padding: 22px;
+
+  text-align: center;
+
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+}
+
+
+
+.top h1 { font-size: 1.8rem; }
+
+.clock {
+
+  margin-top: 8px;
+
+  font-weight: bold;
+
+  color: var(--primary);
+
+  animation: pulseBtn 2s infinite;
+
+}
+
+
+
+.container { padding: 20px; }
+
+
 
 .input-row {
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
- margin-bottom:10px;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+
 }
 
-input, select {
- width:100%;
- padding:10px;
- border-radius:10px;
- background:#1a1a1a;
- border:1px solid #3a3a3a;
- color:var(--text);
+
+
+@media(max-width:700px){
+
+  .input-row { grid-template-columns:1fr; }
+
 }
+
+
+
+label {
+
+  font-size: .8rem;
+
+  color: var(--muted);
+
+}
+
+
+
+input {
+
+  width:100%;
+
+  padding:10px;
+
+  border-radius:10px;
+
+  background:#1a1a1a;
+
+  border:1px solid #3a3a3a;
+
+  color:var(--text);
+
+  transition: all .2s ease;
+
+}
+
+
+
+input:focus {
+
+  border-color: var(--primary);
+
+  outline:none;
+
+  transform: scale(1.02);
+
+}
+
+
 
 button {
- background: var(--primary);
- border:none;
- padding:10px;
- border-radius:10px;
- cursor:pointer;
+
+  cursor:pointer;
+
+  border:none;
+
+  border-radius:10px;
+
+  font-weight:bold;
+
+  transition: all .2s ease;
+
 }
 
-.tasks { margin-top:10px; display:grid; gap:10px; }
+
+
+.input-row button {
+
+  background: linear-gradient(135deg, var(--primary), #fcd34d);
+
+  color:#1a1a1a;
+
+  height:42px;
+
+  animation: floatIn 0.6s ease forwards;
+
+}
+
+
+
+.input-row button:hover {
+
+  transform: translateY(-3px) scale(1.05);
+
+  filter: brightness(1.1);
+
+}
+
+
+
+.tasks {
+
+  margin-top:10px;
+
+  display:grid;
+
+  gap:10px;
+
+}
+
+
 
 .task {
- background: var(--card);
- padding:10px;
- border-radius:10px;
- display:flex;
- justify-content:space-between;
+
+  background: var(--card);
+
+  padding:12px;
+
+  border-radius:10px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  border-left:4px solid transparent;
+
+  opacity:0;
+
+  animation: fadeInTask 0.4s forwards;
+
 }
 
-.task.done { background:#1e3a1a; }
-.task.late { background:#3a1a1a; }
 
-.delete-btn { background:red; color:white; }
+
+.task.done {
+
+  background:#1e3a1a;
+
+  border-left-color: var(--success);
+
+}
+
+
+
+.task.late {
+
+  background:#3a1a1a;
+
+  border-left-color: var(--danger);
+
+}
+
+
+
+.task .text.done {
+
+  text-decoration: line-through;
+
+  color: var(--success);
+
+}
+
+
+
+.task-actions {
+
+  display:flex;
+
+  gap:6px;
+
+}
+
+
+
+.task button {
+
+  width:35px;
+
+  height:35px;
+
+  background: var(--primary);
+
+  color:#1a1a1a;
+
+  border-radius:50%;
+
+  transition: all .2s ease;
+
+}
+
+
+
+.task button:hover { transform: scale(1.2); }
+
+
+
+.delete-btn {
+
+  background: var(--danger) !important;
+
+  border-radius:50%;
+
+  transition: all .2s ease;
+
+}
+
+
+
+.delete-btn:hover { transform: scale(1.2) rotate(-10deg); }
+
+
+
+.error-box {
+
+  background:#3a1a1a;
+
+  border:1px solid var(--danger);
+
+  padding:10px;
+
+  border-radius:10px;
+
+  margin-bottom:10px;
+
+  animation: floatIn 0.4s ease forwards;
+
+}
+
+
+
+.hidden { display:none; }
+
+
+
+.footer {
+
+  text-align:center;
+
+  padding:10px;
+
+  font-size:.8rem;
+
+  color: var(--muted);
+
+  border-top:1px solid rgba(255,255,255,0.05);
+
+  animation: floatIn 0.6s ease forwards;
+
+}
+
 </style>
+
 </head>
 
 <body>
 
+
+
 <div class="page">
-<div class="top">
-<h1>📚 Study Planner</h1>
-<div id="clockText" class="clock"></div>
+
+  <div class="menu">
+
+    <button>الرئيسية</button>
+
+    <button>المهام</button>
+
+    <button>الإعدادات</button>
+
+  </div>
+
+
+
+  <div class="top">
+
+    <h1>📚 Study Planner</h1>
+
+    <div class="clock" id="clockText"></div>
+
+  </div>
+
+
+
+  <div class="container">
+
+    <div class="input-row">
+
+      <label>
+
+        المهمة
+
+        <input id="taskInput" placeholder="مثلاً: رياضيات">
+
+      </label>
+
+      <label>
+
+        الوقت
+
+        <div style="display:flex; gap:5px;">
+
+          <input id="hourInput" type="number" min="0" max="23" value="8">
+
+          <input id="minuteInput" type="number" min="0" max="59" value="00">
+
+        </div>
+
+      </label>
+
+    </div>
+
+
+
+    <div class="input-row">
+
+      <button id="addBtn">+ إضافة</button>
+
+    </div>
+
+
+
+    <div id="errorBox" class="error-box hidden">اكتب المهمة أولاً</div>
+
+
+
+    <div id="tasks" class="tasks"></div>
+
+  </div>
+
+
+
+  <div class="footer">Developer - GNR 🔥</div>
+
 </div>
 
-<div class="container">
 
-<div class="input-row">
-<input id="taskInput" placeholder="المهمة">
-
-<div>
-بداية:
-<div style="display:flex; gap:5px;">
-<input id="startHour" type="number" min="1" max="12" value="8">
-<input id="startMin" type="number" min="0" max="59" value="0">
-<select id="startAP">
-<option>AM</option>
-<option>PM</option>
-</select>
-</div>
-</div>
-</div>
-
-<div class="input-row">
-<div>
-نهاية:
-<div style="display:flex; gap:5px;">
-<input id="endHour" type="number" min="1" max="12" value="9">
-<input id="endMin" type="number" min="0" max="59" value="0">
-<select id="endAP">
-<option>AM</option>
-<option>PM</option>
-</select>
-</div>
-</div>
-
-<button id="addBtn">+ إضافة</button>
-</div>
-
-<div id="tasks" class="tasks"></div>
-
-</div>
-</div>
 
 <script>
+
 const taskInput = document.getElementById("taskInput");
+
+const hourInput = document.getElementById("hourInput");
+
+const minuteInput = document.getElementById("minuteInput");
+
 const tasksEl = document.getElementById("tasks");
+
+const errorBox = document.getElementById("errorBox");
+
+const clockText = document.getElementById("clockText");
+
+const addBtn = document.getElementById("addBtn");
+
+
 
 let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-function convertTo24(h, m, ap){
- h = parseInt(h);
- m = parseInt(m);
 
- if(ap === "PM" && h !== 12) h += 12;
- if(ap === "AM" && h === 12) h = 0;
 
- return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-}
+function save(){ localStorage.setItem("tasks", JSON.stringify(tasks)); }
 
-function save(){
- localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+
 
 function addTask(){
- const text = taskInput.value.trim();
- if(!text) return;
 
- const start = convertTo24(
- document.getElementById("startHour").value,
- document.getElementById("startMin").value,
- document.getElementById("startAP").value
- );
+  let text = taskInput.value.trim();
 
- const end = convertTo24(
- document.getElementById("endHour").value,
- document.getElementById("endMin").value,
- document.getElementById("endAP").value
- );
+  let hour = hourInput.value;
 
- tasks.push({ text, start, end, done:false });
+  let min = minuteInput.value;
 
- taskInput.value="";
- save();
- render();
+
+
+  if(!text){
+
+    errorBox.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+
+  errorBox.classList.add("hidden");
+
+
+
+  tasks.push({
+
+    text,
+
+    time: `${hour.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}`,
+
+    done:false
+
+  });
+
+
+
+  taskInput.value="";
+
+  save();
+
+  render();
+
 }
+
+
 
 function render(){
- tasksEl.innerHTML="";
- const now = new Date().toTimeString().slice(0,5);
 
- tasks.forEach((t,i)=>{
- const late = !t.done && t.end < now;
+  tasksEl.innerHTML = "";
 
- const div = document.createElement("div");
- div.className = "task " + (t.done?"done": late?"late":"");
+  const now = new Date();
 
- div.innerHTML = `
- <div>${t.text} (${t.start} - ${t.end})</div>
- <div>
- <button onclick="toggle(${i})">${t.done?"↩":"✔"}</button>
- <button class="delete-btn" onclick="del(${i})">🗑</button>
- </div>
- `;
+  const timeNow = now.toTimeString().slice(0,5);
 
- tasksEl.appendChild(div);
- });
+  const frag = document.createDocumentFragment();
+
+
+
+  tasks.forEach((t,i)=>{
+
+    const late = !t.done && t.time < timeNow;
+
+
+
+    const div = document.createElement("div");
+
+    div.className = "task" + (t.done ? " done" : late ? " late":"");
+
+    div.style.animationDelay = `${i*0.05}s`;
+
+
+
+    div.innerHTML = `
+
+      <div class="text ${t.done?"done":""}">${t.text} (${t.time})</div>
+
+      <div class="task-actions">
+
+        <button onclick="toggle(${i})">${t.done?"↩":"✔"}</button>
+
+        <button class="delete-btn" onclick="del(${i})">🗑</button>
+
+      </div>
+
+    `;
+
+
+
+    frag.appendChild(div);
+
+  });
+
+
+
+  tasksEl.appendChild(frag);
+
 }
 
-function toggle(i){
- tasks[i].done = !tasks[i].done;
- save();
- render();
-}
 
-function del(i){
- tasks.splice(i,1);
- save();
- render();
-}
+
+function toggle(i){ tasks[i].done = !tasks[i].done; save(); render(); }
+
+function del(i){ tasks.splice(i,1); save(); render(); }
+
+
 
 function updateClock(){
- document.getElementById("clockText").textContent =
- new Date().toLocaleTimeString();
- requestAnimationFrame(updateClock);
+
+  const now = new Date();
+
+  clockText.textContent = now.toLocaleTimeString();
+
+  requestAnimationFrame(updateClock);
+
 }
 
-document.getElementById("addBtn").onclick = addTask;
+
+
+addBtn.addEventListener("click", addTask);
+
+
+
+// أول مرة
 
 render();
+
 updateClock();
+
 </script>
 
+
+
 </body>
+
 </html>
